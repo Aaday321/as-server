@@ -2,11 +2,17 @@
 
 Real-time chat is implemented with **REST for persistence** and **Socket.IO for real-time delivery**.
 
+## Controller → Service → Repository
+
+- **Controllers** (`app/controllers/chat/`) – HTTP only: validate request, call service, return response.
+- **Service** (`chat_service.ts`) – Business logic and orchestration; uses repositories for all data access.
+- **Repositories** (`app/repositories/chat/`) – Data access only: queries and persistence, no business rules.
+
 ## Structure
 
-- **`chat_service.ts`** – Domain logic: create channels, add members, create messages, list messages.
+- **`chat_service.ts`** – Application service: create channels, add members, create messages, list messages (delegates to repos).
 - **`ws_service.ts`** – Singleton Socket.IO server; attaches to the HTTP server on `http:server_ready`.
-- **`ws_gateway.ts`** – Socket.IO event handlers: auth, `join_channel`, `leave_channel`, `send_message`, `typing_start`, `typing_stop`.
+- **`ws_gateway.ts`** – Socket.IO event handlers (uses `ChatService` for membership and sending messages).
 
 ## REST API (authenticated with Bearer token)
 
